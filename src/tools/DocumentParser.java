@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.stream.Stream;
 
 /**
+ * Very specific to my needs, pulls out the specific fields I am after
+ * as suggested in the fields below, and creates articles with these.
  * Created by Liam on 23-Apr-16.
  */
 public class DocumentParser {
@@ -34,7 +36,7 @@ public class DocumentParser {
     public DocumentParser() {
         parseDataFiles();
 
-        System.out.println("Size = " + articles.size());
+        System.out.println("Size = " + articles.size() + " articles");
     }
 
     private void parseDataFiles() {
@@ -86,17 +88,18 @@ public class DocumentParser {
     private void addTopics(String s) {
         s = s.replace(TAG_TOPICS_OPENED, "");
         s = s.replace(TAG_TOPICS_CLOSED, "");
-        s = s.replace(TAG_ITEM_CLOSED, "");
-        String[] topics = s.split(TAG_ITEM_OPENED);
+        s = s.replace(TAG_ITEM_OPENED, "");
+        String[] topics = s.split(TAG_ITEM_CLOSED);
         currentArticle.setTopics(topics);
     }
 
     private void addTitle(final String s, int tempIndex) {
+        int tempIndex2;
         tempIndex += TAG_TITLE_OPENED.length();
 
-        currentArticle.appendText(s.substring(
+        currentArticle.setTitle(s.substring(
                 tempIndex,
-                (tempIndex = s.indexOf(TAG_TITLE_CLOSED)) != -1 ? tempIndex : s.length()) + " "
+                (tempIndex2 = s.indexOf(TAG_TITLE_CLOSED)) != -1 ? tempIndex2 : s.length())
         );
     }
 
@@ -106,7 +109,7 @@ public class DocumentParser {
 
         currentArticle.appendText(s.substring(
                 tempIndex,
-                (tempIndex = s.indexOf(TAG_BODY_CLOSED)) != -1 ? tempIndex : s.length()) + " "
+                (tempIndex = s.indexOf(TAG_BODY_CLOSED)) != -1 ? tempIndex : s.length()) + "\n"
         );
 
         if (s.contains(TAG_BODY_CLOSED)) {
@@ -115,7 +118,7 @@ public class DocumentParser {
     }
 
     private void appendBody(final String s) {
-        currentArticle.appendText(s + " ");
+        currentArticle.appendText(s + "\n");
     }
 
     private void endBody(final String s, int tempIndex) {
