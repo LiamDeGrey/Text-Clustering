@@ -30,62 +30,74 @@ public class DocumentParser {
     private static final String TAG_ITEM_OPENED = "<D>";
     private static final String TAG_ITEM_CLOSED = "</D>";
 
-    private List<Article> articles = new ArrayList<>();
-    private Article currentArticle;
-
-    public DocumentParser() {
-        parseDataFiles();
-
+    public static List<Article> parseArticles() {
+        final List<Article> articles = parseDataFiles();
         System.out.println("Size = " + articles.size() + " articles");
+        return articles;
     }
 
-    private void parseDataFiles() {
+    private static List<Article> parseDataFiles() {
+        final List<Article> articles = new ArrayList<>();
         try {
             Files.walk(Paths.get(FILEPATH)).forEach(filePath -> {
                 if (filePath.toString().endsWith(FILE_EXTENSION)) {
-                    parseDataFile(filePath);
+                    articles.addAll(parseDataFile(filePath));
                 }
             });
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
+
+        return articles;
     }
 
-    private List<Article> parseDataFile(final Path path) {
+    private static List<Article> parseDataFile(final Path path) {
         System.out.println("Parsing file " + path.toString());
+
+        final List<Article> articles = new ArrayList<>();
+        Article currentArticle = null;
         try {
             final Stream<String> stream = Files.lines(path);
-            stream.forEach(s -> {
+            final String[] articleData = stream.toArray(String[]::new);
+
+            for (final String s : articleData) {
                 if (currentArticle == null) {
                     if (s.contains(TAG_REUTERS_OPENED)) {
                         articles.add(currentArticle = new Article());
                     }
-                } else {
+                }
+                else {
                     int tempIndex;
 
                     if (s.contains(TAG_REUTERS_CLOSED)) {
                         currentArticle = null;
-                    } else if ((tempIndex = s.indexOf(TAG_TOPICS_OPENED)) != -1) {
-                        addTopics(s);
-                    } else if ((tempIndex = s.indexOf(TAG_TITLE_OPENED)) != -1) {
-                        addTitle(s, tempIndex);
-                    } else if ((tempIndex = s.indexOf(TAG_BODY_OPENED)) != -1) {
-                        startBody(s, tempIndex);
-                    } else if ((tempIndex = s.indexOf(TAG_BODY_CLOSED)) != -1) {
-                        endBody(s, tempIndex);
-                    } else if (currentArticle != null && currentArticle.requiresBodyText()) {
-                        appendBody(s);
+                    }
+                    else if (s.contains(TAG_TOPICS_OPENED)) {
+                        addTopics(currentArticle, s);
+                    }
+                    else if ((tempIndex = s.indexOf(TAG_TITLE_OPENED)) != -1) {
+                        addTitle(currentArticle, s, tempIndex);
+                    }
+                    else if ((tempIndex = s.indexOf(TAG_BODY_OPENED)) != -1) {
+                        startBody(currentArticle, s, tempIndex);
+                    }
+                    else if ((tempIndex = s.indexOf(TAG_BODY_CLOSED)) != -1) {
+                        endBody(currentArticle, s, tempIndex);
+                    }
+                    else if (currentArticle.requiresBodyText()) {
+                        appendBody(currentArticle, s);
                     }
                 }
-            });
-
-        } catch (IOException e) {
+            }
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
         return articles;
     }
 
-    private void addTopics(String s) {
+    private static void addTopics(final Article currentArticle, String s) {
         s = s.replace(TAG_TOPICS_OPENED, "");
         s = s.replace(TAG_TOPICS_CLOSED, "");
         s = s.replace(TAG_ITEM_OPENED, "");
@@ -93,7 +105,7 @@ public class DocumentParser {
         currentArticle.setTopics(topics);
     }
 
-    private void addTitle(final String s, int tempIndex) {
+    private static void addTitle(final Article currentArticle, final String s, int tempIndex) {
         int tempIndex2;
         tempIndex += TAG_TITLE_OPENED.length();
 
@@ -103,7 +115,7 @@ public class DocumentParser {
         );
     }
 
-    private void startBody(final String s, int tempIndex) {
+    private static void startBody(final Article currentArticle, final String s, int tempIndex) {
         currentArticle.startBody();
         tempIndex += TAG_BODY_OPENED.length();
 
@@ -117,11 +129,11 @@ public class DocumentParser {
         }
     }
 
-    private void appendBody(final String s) {
+    private static void appendBody(final Article currentArticle, final String s) {
         currentArticle.appendText(s + "\n");
     }
 
-    private void endBody(final String s, int tempIndex) {
+    private static void endBody(final Article currentArticle, final String s, int tempIndex) {
         currentArticle.appendText(s.substring(0, tempIndex));
         currentArticle.finishBody();
     }
