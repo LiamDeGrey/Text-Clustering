@@ -12,18 +12,27 @@ import tools.DocumentVectorCreator;
  */
 public class Main {
 
-    public static void main(final String[] args) {
-        List<Article> articles = null;
-        try {
-            articles = ArticleStorage.load();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+    private static List<Article> retrieveArticles() throws IOException {
+        List<Article> articles;
+
+        articles = ArticleStorage.load();
 
         if (articles == null) {
             articles = DocumentParser.parseArticles();
             DocumentVectorCreator.setArticleVectors(articles);
+
+            ArticleStorage.store(articles);
+        }
+
+        return articles;
+    }
+
+    public static void main(final String[] args) {
+        try {
+            retrieveArticles();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
         }
 
         System.out.println("Articles ready");

@@ -1,7 +1,9 @@
 package tools;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import models.Article;
 import models.DocumentWord;
@@ -16,18 +18,20 @@ public class DocumentVectorCreator {
 
     public static void setArticleVectors(final List<Article> articles) {
         System.out.println("STARTING: word weighting");
+        final Map<String, Integer> wordCountTable = new HashMap<>();
 
-        double index = 0;
         List<DocumentWord> documentWords;
         for (final Article article : articles) {
-            documentWords = findTermFrequencies(article.getBody());
-            System.out.println(String.format("COMPLETED: %.8f%%", (index += 0.5) / articles.size()));
-            findInverseDocumentFrequencies(articles, documentWords);
-            System.out.println(String.format("COMPLETED: %.8f%%", (index += 0.5) / articles.size()));
+            documentWords = findTermFrequencies(article.getBody(), wordCountTable);
+            article.setDocumentWords(documentWords);
         }
+        System.out.println("COMPLETED: Term frequency pass");
+
+        findInverseDocumentFrequencies(articles, wordCountTable);
+        System.out.println("COMPLETED: Inverse document frequency pass");
     }
 
-    private static List<DocumentWord> findTermFrequencies(final String body) {
+    private static List<DocumentWord> findTermFrequencies(final String body, final Map<String, Integer> wordCountTable) {
         final List<DocumentWord> documentWords = new ArrayList<>();
 
         final String[] words = body.split("\\s");
@@ -38,8 +42,9 @@ public class DocumentVectorCreator {
         int wordInstances;
         for (int i = 0; i < words.length; i++) {
             if ((word = words[i]) != null) {
-                wordInstances = 1;
+                wordCountTable.put(word, wordCountTable.get(word) != null ? wordCountTable.get(word) + 1 : 1);
 
+                wordInstances = 1;
                 for (int j = i + 1; j < words.length; j++) {
                     if (word.equalsIgnoreCase(words[j])) {
                         wordInstances++;
@@ -55,25 +60,14 @@ public class DocumentVectorCreator {
         return documentWords;
     }
 
-    private static List<DocumentWord> findInverseDocumentFrequencies(
-            final List<Article> articles, final List<DocumentWord> documentWords) {
+    private static void findInverseDocumentFrequencies(
+            final List<Article> articles, final Map<String, Integer> wordCountTable) {
         final int totalDocuments = articles.size();
 
-        int documentCount;
-        String currentWord;
-        for (final DocumentWord documentWord : documentWords) {
-            documentCount = 0;
-            currentWord = documentWord.getWord().toLowerCase();
-
-            for (final Article article : articles) {
-                if (article.getBody().toLowerCase().contains(currentWord)) {
-                    documentCount++;
-                }
+        for (final Article article : articles) {
+            for (final DocumentWord documentWord : article.getDocumentWords()) {
+                documentWord.setInverseDocumentFrequency(Math.log((totalDocuments / wordCountTable.get(documentWord.getWord()))));
             }
-
-            documentWord.setInverseDocumentFrequency(Math.log((totalDocuments / documentCount)));
         }
-
-        return documentWords;
     }
 }

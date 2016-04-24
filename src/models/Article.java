@@ -17,8 +17,8 @@ public class Article {
     @SerializedName("body")
     private String body = "";//The body text
 
-    @SerializedName("wordVector")
-    private List<DocumentWord> wordVector;
+    @SerializedName("documentWords")
+    private List<DocumentWord> documentWords;
 
     private transient boolean requiresBodyText;
 
@@ -42,8 +42,12 @@ public class Article {
         return topics;
     }
 
-    public void setWordVector(final List<DocumentWord> wordVector) {
-        this.wordVector = wordVector;
+    public void setDocumentWords(final List<DocumentWord> documentWords) {
+        this.documentWords = documentWords;
+    }
+
+    public List<DocumentWord> getDocumentWords() {
+        return documentWords;
     }
 
     public void appendText(final String bodyText) {
@@ -64,6 +68,7 @@ public class Article {
     }
 
     public void finishBody() {
+        body = body.replaceAll("\\s+", " ");
         requiresBodyText = false;
     }
 }

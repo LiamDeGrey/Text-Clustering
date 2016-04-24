@@ -121,7 +121,7 @@ public class DocumentParser {
 
         currentArticle.appendText(s.substring(
                 tempIndex,
-                (tempIndex = s.indexOf(TAG_BODY_CLOSED)) != -1 ? tempIndex : s.length()) + "\n"
+                (tempIndex = s.indexOf(TAG_BODY_CLOSED)) != -1 ? tempIndex : s.length()) + " "
         );
 
         if (s.contains(TAG_BODY_CLOSED)) {
@@ -130,7 +130,7 @@ public class DocumentParser {
     }
 
     private static void appendBody(final Article currentArticle, final String s) {
-        currentArticle.appendText(s + "\n");
+        currentArticle.appendText(s + " ");
     }
 
     private static void endBody(final Article currentArticle, final String s, int tempIndex) {
