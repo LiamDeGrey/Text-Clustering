@@ -3,7 +3,7 @@
 
 *.iml
 
-.out/
+out/
 
 ## Directory-based project format:
 .idea/
