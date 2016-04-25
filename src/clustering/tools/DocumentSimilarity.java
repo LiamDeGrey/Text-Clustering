@@ -47,7 +47,7 @@ public class DocumentSimilarity {
                     weightSum.putAll(article.getDocumentWords());
                     weightSum.putAll(comparisonArticle.getDocumentWords());
 
-                    vectorSum = weightSum.values().stream().mapToDouble(Double::intValue).sum();
+                    vectorSum = weightSum.values().stream().mapToDouble(Double::doubleValue).sum();
 
                     documentVectorSums.put(String.format(KEY_FORMAT, i, j), vectorSum);
                 }
