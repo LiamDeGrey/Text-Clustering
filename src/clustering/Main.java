@@ -2,7 +2,6 @@ package clustering;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Set;
 
 import clustering.models.Article;
 import clustering.tools.DocumentParser;
@@ -19,7 +18,7 @@ public class Main {
         List<Article> articles;
 
         articles = DocumentParser.parseArticles();
-        final Set<String> uniqueWords = DocumentVectorCreator.setArticleVectors(articles);
+        DocumentVectorCreator.setArticleVectors(articles);
 
         if (articles != null) {
             DocumentSimilarity.findDocumentSimilarities(articles);

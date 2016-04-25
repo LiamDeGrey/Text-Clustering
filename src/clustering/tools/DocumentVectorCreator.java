@@ -3,7 +3,6 @@ package clustering.tools;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import clustering.models.Article;
 
@@ -19,7 +18,7 @@ public class DocumentVectorCreator {
      * @param articles
      * @return a set of all unique words in all of the documents
      */
-    public static Set<String> setArticleVectors(final List<Article> articles) {
+    public static void setArticleVectors(final List<Article> articles) {
         System.out.println("STARTING: word weighting");
         final Map<String, Integer> wordCountTable = new HashMap<>();
 
@@ -28,8 +27,6 @@ public class DocumentVectorCreator {
 
         findInverseDocumentFrequencies(articles, wordCountTable);
         System.out.println("COMPLETED: Inverse document frequency pass");
-
-        return wordCountTable.keySet();
     }
 
     private static void findTermFrequencies(final List<Article> articles, final Map<String, Integer> wordCountTable) {
