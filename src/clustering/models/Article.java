@@ -2,7 +2,8 @@ package clustering.models;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * An article from my collection that contains a full vector of weightings
@@ -16,9 +17,11 @@ public class Article {
     private String title;//Title of article
     @SerializedName("body")
     private String body = "";//The body text
+    @SerializedName("articleSum")
+    private double articleSum = -1;
 
     @SerializedName("documentWords")
-    private List<DocumentWord> documentWords;
+    private Map<String, Double> documentWords = new HashMap<>();
 
     private transient boolean requiresBodyText;
 
@@ -42,12 +45,25 @@ public class Article {
         return topics;
     }
 
-    public void setDocumentWords(final List<DocumentWord> documentWords) {
-        this.documentWords = documentWords;
+    public void setDocumentWords(final Map<String, Double> documentWords) {
+        this.documentWords.putAll(documentWords);
     }
 
-    public List<DocumentWord> getDocumentWords() {
+    public Map<String, Double> getDocumentWords() {
         return documentWords;
+    }
+
+    public double getArticleSum() {
+        if (articleSum == -1) {
+            articleSum = 0;
+
+            for (final Double weight : documentWords.values()) {
+                articleSum += Math.pow(weight, 2);
+            }
+            articleSum = Math.sqrt(articleSum);
+        }
+
+        return articleSum;
     }
 
     public void appendText(final String bodyText) {

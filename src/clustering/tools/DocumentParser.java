@@ -1,8 +1,5 @@
 package clustering.tools;
 
-import clustering.Main;
-import clustering.models.Article;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -10,6 +7,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
+
+import clustering.models.Article;
 
 /**
  * Very specific to my needs, pulls out the specific fields I am after
@@ -42,13 +41,7 @@ public class DocumentParser {
         try {
             Files.walk(Paths.get(FILEPATH)).forEach(filePath -> {
                 if (filePath.toString().endsWith(FILE_EXTENSION)) {
-                    if (filePath.toString().contains("2 test cases")) {
-                        if (Main.DEBUG) {
-                            articles.addAll(parseDataFile(filePath));
-                        }
-                    } else {
-                        articles.addAll(parseDataFile(filePath));
-                    }
+                    articles.addAll(parseDataFile(filePath));
                 }
             });
         }

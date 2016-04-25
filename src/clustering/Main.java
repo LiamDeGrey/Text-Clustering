@@ -2,10 +2,11 @@ package clustering;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 import clustering.models.Article;
-import clustering.tools.ArticleStorage;
 import clustering.tools.DocumentParser;
+import clustering.tools.DocumentSimilarity;
 import clustering.tools.DocumentVectorCreator;
 
 /**
@@ -13,31 +14,31 @@ import clustering.tools.DocumentVectorCreator;
  * Created by Liam on 23-Apr-16.
  */
 public class Main {
-    public static final boolean DEBUG = false;
 
     private static List<Article> retrieveArticles() throws IOException {
         List<Article> articles;
 
-        articles = ArticleStorage.load();
+        articles = DocumentParser.parseArticles();
+        final Set<String> uniqueWords = DocumentVectorCreator.setArticleVectors(articles);
 
-        if (articles == null) {
-            articles = DocumentParser.parseArticles();
-            DocumentVectorCreator.setArticleVectors(DEBUG ? articles.subList(0, 2) : articles);
-
-            ArticleStorage.store(DEBUG ? articles.subList(0, 2) : articles);
+        if (articles != null) {
+            DocumentSimilarity.findDocumentSimilarities(articles);
         }
 
         return articles;
     }
 
     public static void main(final String[] args) {
+        List<Article> articles = null;
         try {
-            retrieveArticles();
+            articles = retrieveArticles();
         }
         catch (IOException e) {
             e.printStackTrace();
         }
 
         System.out.println("Articles ready");
+
+
     }
 }
