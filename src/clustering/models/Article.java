@@ -47,6 +47,8 @@ public class Article {
 
     public void setDocumentWords(final Map<String, Double> documentWords) {
         this.documentWords.putAll(documentWords);
+
+        body = null;
     }
 
     public Map<String, Double> getDocumentWords() {

@@ -48,6 +48,8 @@ public class DocumentSimilarity {
                     weightSum.putAll(comparisonArticle.getDocumentWords());
 
                     vectorSum = weightSum.values().stream().mapToDouble(Double::intValue).sum();
+
+                    documentVectorSums.put(String.format(KEY_FORMAT, i, j), vectorSum);
                 }
 
                 //documentDistances.add(1 - (vectorSum / (article.getArticleSum() * comparisonArticle.getArticleSum())));
