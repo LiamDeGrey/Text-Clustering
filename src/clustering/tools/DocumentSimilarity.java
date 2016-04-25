@@ -1,5 +1,6 @@
 package clustering.tools;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,13 +24,18 @@ public class DocumentSimilarity {
                     super.putAll(m);
                 }
                 else {
-                    String word;
-                    Double weight;
-                    for (final Entry<? extends String, ? extends Double> documentWord : m.entrySet()) {
-                        word = documentWord.getKey();
-                        weight = get(word);
-                        put(word, weight != null ? weight * documentWord.getValue() : documentWord.getValue());
+                    final List<String> requireRemoval = new ArrayList<>();
+                    String originalWord;
+                    Double newWeight;
+                    for (final Map.Entry<String, Double> originalItem : entrySet()) {
+                        if ((newWeight = m.get(originalWord = originalItem.getKey())) != null) {
+                            put(originalWord, get(originalWord) * newWeight);
+                        } else {
+                            requireRemoval.add(originalWord);
+                        }
                     }
+
+                    requireRemoval.forEach(this::remove);
                 }
             }
         };
