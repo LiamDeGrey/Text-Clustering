@@ -23,7 +23,17 @@ public class Article {
     @SerializedName("documentWords")
     private Map<String, Double> documentWords = new HashMap<>();
 
+    private Point point;
+
     private transient boolean requiresBodyText;
+
+    public Point getPoint() {
+        return point;
+    }
+
+    public void setPoint(final Point point) {
+        this.point = point;
+    }
 
     public String getBody() {
         return body;

@@ -21,7 +21,7 @@ public class Main {
         DocumentVectorCreator.setArticleVectors(articles);
 
         if (articles != null) {
-            DocumentSimilarity.findDocumentSimilarities(articles);
+            //DocumentSimilarity.findDocumentSimilarities(articles);
         }
 
         return articles;
