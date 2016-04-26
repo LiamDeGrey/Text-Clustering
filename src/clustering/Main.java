@@ -7,6 +7,7 @@ import clustering.models.Article;
 import clustering.tools.DocumentParser;
 import clustering.tools.DocumentSimilarity;
 import clustering.tools.DocumentVectorCreator;
+import clustering.tools.KMeans;
 
 /**
  * The master
@@ -22,6 +23,7 @@ public class Main {
 
         if (articles != null) {
             //DocumentSimilarity.findDocumentSimilarities(articles);
+            new KMeans(articles.subList(0, 100));
         }
 
         return articles;

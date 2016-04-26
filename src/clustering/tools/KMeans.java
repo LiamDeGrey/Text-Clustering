@@ -1,13 +1,12 @@
 package clustering.tools;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
+import java.util.stream.Collectors;
 
 import clustering.models.Article;
 import clustering.models.Cluster;
-import clustering.models.Point;
 
 /**
  * Created by Liam on 26/04/2016.
@@ -15,41 +14,17 @@ import clustering.models.Point;
 public class KMeans {
 
     //Number of Clusters. This metric should be related to the number of articles
-    private int NUM_CLUSTERS = 3;
-    //Number of Points
-    private int NUM_POINTS = 15;
-    //Min and Max X and Y
-    private static final int MIN_COORDINATE = 0;
-    private static final int MAX_COORDINATE = 10;
+    private int K = 3;
 
     private List<Article> articles;
     private List<Cluster> clusters;
 
-    public KMeans() {
-        this.articles = new ArrayList<>();
+    public KMeans(final List<Article> articles) {
+        this.articles = articles;
         this.clusters = new ArrayList<>();
-    }
 
-    public static void main(String[] args) {
-
-        KMeans kmeans = new KMeans();
-        kmeans.init();
-        kmeans.calculate();
-    }
-
-    protected static Point createRandomPoint(int min, int max) {
-        Random r = new Random();
-        double x = min + (max - min) * r.nextDouble();
-        double y = min + (max - min) * r.nextDouble();
-        return new Point(x, y);
-    }
-
-    protected static List<Point> createRandomPoints(int min, int max, int number) {
-        List<Point> points = new ArrayList<>(number);
-        for (int i = 0; i < number; i++) {
-            points.add(createRandomPoint(min, max));
-        }
-        return points;
+        init();
+        calculate();
     }
 
     //Initializes the process
@@ -57,10 +32,14 @@ public class KMeans {
 
         //Create Clusters
         //Set Random Centroids
-        for (int i = 0; i < NUM_CLUSTERS; i++) {
-            Cluster cluster = new Cluster(i);
-            Point centroid = createRandomPoint(MIN_COORDINATE, MAX_COORDINATE);
-            cluster.setCentroid(centroid);
+        final HashSet<Integer> randoms = new HashSet<>();
+        while (randoms.size() != K) {
+            randoms.add((int) (Math.random() * (articles.size() - 1)));
+        }
+
+        for (final Integer random : randoms) {
+            Cluster cluster = new Cluster(random);
+            cluster.setCentroid(articles.get(random));
             clusters.add(cluster);
         }
 
@@ -69,7 +48,7 @@ public class KMeans {
     }
 
     private void plotClusters() {
-        for (int i = 0; i < NUM_CLUSTERS; i++) {
+        for (int i = 0; i < K; i++) {
             Cluster c = clusters.get(i);
             c.plotCluster();
         }
@@ -85,7 +64,7 @@ public class KMeans {
             //Clear cluster state
             clearClusters();
 
-            List lastCentroids = getCentroids();
+            List<Article> lastCentroids = getCentroids();
 
             //Assign articles to the closer cluster
             assignCluster();
@@ -95,12 +74,12 @@ public class KMeans {
 
             iteration++;
 
-            List currentCentroids = getCentroids();
+            List<Article> currentCentroids = getCentroids();
 
             //Calculates total distance between new and old Centroids
             double distance = 0;
             for (int i = 0; i < lastCentroids.size(); i++) {
-                distance += distance(lastCentroids.get(i), currentCentroids.get(i));
+                distance += DocumentSimilarity.findDocumentSimilarities(lastCentroids.get(i), currentCentroids.get(i));
             }
             System.out.println("#################");
             System.out.println("Iteration: " + iteration);
@@ -113,20 +92,12 @@ public class KMeans {
         }
     }
 
-    protected static double distance(Point p, Point centroid) {
-        return Math.sqrt(Math.pow((centroid.getY() - p.getY()), 2) + Math.pow((centroid.getX() - p.getX()), 2));
-    }
-
     private void clearClusters() {
-        for (Cluster cluster : clusters) {
-            cluster.clear();
-        }
+        clusters.forEach(Cluster::clear);
     }
 
-    private List<Cluster> getCentroids() {
-        final List<Cluster> clusters2 = new ArrayList<>();
-        Collections.addAll(clusters2, clusters);
-        return clusters2;
+    private List<Article> getCentroids() {
+        return clusters.stream().map(Cluster::getCentroid).collect(Collectors.toList());
     }
 
     private void assignCluster() {
@@ -137,16 +108,16 @@ public class KMeans {
 
         for (final Article article : articles) {
             min = max;
-            for (int i = 0; i < NUM_CLUSTERS; i++) {
+            for (int i = 0; i < K; i++) {
                 Cluster c = clusters.get(i);
-                distance = Point.distance(article, c.getCentroid());
+                distance = DocumentSimilarity.findDocumentSimilarities(article, c.getCentroid());
                 if (distance < min) {
                     min = distance;
                     cluster = i;
                 }
             }
             article.setCluster(cluster);
-            clusters.get(cluster).addPoint(article);
+            clusters.get(cluster).addArticle(article);
         }
     }
 
@@ -158,16 +129,16 @@ public class KMeans {
             int n_points = list.size();
 
             for (final Article article : list) {
-                sumX += article.getPoint().getX();
-                sumY += article.getPoint().getY();
+                sumX += article.pointX;
+                sumY += article.pointY;
             }
 
-            Point centroid = cluster.getCentroid();
+            Article centroid = cluster.getCentroid();
             if (n_points > 0) {
                 double newX = sumX / n_points;
                 double newY = sumY / n_points;
-                centroid.setX(newX);
-                centroid.setY(newY);
+                centroid.pointX = newX;
+                centroid.pointY = newY;
             }
         }
     }

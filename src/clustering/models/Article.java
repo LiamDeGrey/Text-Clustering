@@ -23,16 +23,19 @@ public class Article {
     @SerializedName("documentWords")
     private Map<String, Double> documentWords = new HashMap<>();
 
-    private Point point;
+    public double pointX;
+    public double pointY;
+
+    private int cluster;
 
     private transient boolean requiresBodyText;
 
-    public Point getPoint() {
-        return point;
+    public int getCluster() {
+        return cluster;
     }
 
-    public void setPoint(final Point point) {
-        this.point = point;
+    public void setCluster(final int cluster) {
+        this.cluster = cluster;
     }
 
     public String getBody() {

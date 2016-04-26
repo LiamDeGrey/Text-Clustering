@@ -8,7 +8,7 @@ import java.util.List;
  */
 public class Cluster {
     private List<Article> articles;
-    private Point centroid;
+    private Article centroid;
     private int id;
 
     public Cluster(final int id) {
@@ -29,11 +29,11 @@ public class Cluster {
         articles.add(article);
     }
 
-    public Point getCentroid() {
+    public Article getCentroid() {
         return centroid;
     }
 
-    public void setCentroid(final Point centroid) {
+    public void setCentroid(final Article centroid) {
         this.centroid = centroid;
     }
 
@@ -50,7 +50,7 @@ public class Cluster {
         System.out.println("[Centroid: " + centroid + "]");
         System.out.println("[Points: \n");
         for (final Article article : articles) {
-            System.out.println("x:" + article.getPoint().getX() + "y:" + article.getPoint().getY());
+            System.out.println("x:" + article.pointX + "y:" + article.pointY);
         }
         System.out.println("]");
     }
