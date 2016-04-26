@@ -5,6 +5,8 @@ import com.google.gson.annotations.SerializedName;
 import java.util.HashMap;
 import java.util.Map;
 
+import clustering.tools.DocumentSimilarity;
+
 /**
  * An article from my collection that contains a full vector of weightings
  * using TFIDF for each unique word
@@ -17,14 +19,11 @@ public class Article {
     private String title;//Title of article
     @SerializedName("body")
     private String body = "";//The body text
-    @SerializedName("articleSum")
-    private double articleSum = -1;
+    @SerializedName("vectorSum")
+    private double vectorSum = -1;
 
-    @SerializedName("documentWords")
-    private Map<String, Double> documentWords = new HashMap<>();
-
-    public double pointX;
-    public double pointY;
+    @SerializedName("articleVector")
+    private Map<String, Double> articleVector = new HashMap<>();
 
     private int cluster;
 
@@ -58,27 +57,22 @@ public class Article {
         return topics;
     }
 
-    public void setDocumentWords(final Map<String, Double> documentWords) {
-        this.documentWords.putAll(documentWords);
+    public void setArticleVector(final Map<String, Double> articleVector) {
+        this.articleVector.putAll(articleVector);
 
         body = null;
     }
 
-    public Map<String, Double> getDocumentWords() {
-        return documentWords;
+    public Map<String, Double> getArticleVector() {
+        return articleVector;
     }
 
-    public double getArticleSum() {
-        if (articleSum == -1) {
-            articleSum = 0;
-
-            for (final Double weight : documentWords.values()) {
-                articleSum += Math.pow(weight, 2);
-            }
-            articleSum = Math.sqrt(articleSum);
+    public double getVectorSum() {
+        if (vectorSum == -1) {
+            vectorSum = DocumentSimilarity.getVectorSum(articleVector);
         }
 
-        return articleSum;
+        return vectorSum;
     }
 
     public void appendText(final String bodyText) {

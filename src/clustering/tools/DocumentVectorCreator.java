@@ -57,7 +57,7 @@ public class DocumentVectorCreator {
                 }
             }
 
-            article.setDocumentWords(documentWords);
+            article.setArticleVector(documentWords);
         }
     }
 
@@ -66,7 +66,7 @@ public class DocumentVectorCreator {
         final double totalDocuments = articles.size();
 
         for (final Article article : articles) {
-            for (final Map.Entry<String, Double> documentWord : article.getDocumentWords().entrySet()) {
+            for (final Map.Entry<String, Double> documentWord : article.getArticleVector().entrySet()) {
                 documentWord.setValue(documentWord.getValue() * Math.log10((totalDocuments / (wordCountTable.get(documentWord.getKey()) * 1.0))));
             }
         }

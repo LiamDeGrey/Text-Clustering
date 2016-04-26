@@ -23,7 +23,7 @@ public class Main {
 
         if (articles != null) {
             //DocumentSimilarity.findDocumentSimilarities(articles);
-            new KMeans(articles.subList(0, 100));
+            new KMeans(articles.subList(0, 1000));
         }
 
         return articles;

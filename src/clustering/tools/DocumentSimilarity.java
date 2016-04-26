@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import clustering.models.Article;
+import clustering.models.Cluster;
 
 /**
  * a class to find the similarity between all of the
@@ -14,7 +15,7 @@ import clustering.models.Article;
  */
 public class DocumentSimilarity {
 
-    public static double findDocumentSimilarities(final Article article, final Article comparisonArticle) {
+    public static double findDocumentSimilarities(final Cluster cluster, final Article article) {
         final Map<String, Double> weightSum = new HashMap<String, Double>() {
             @Override
             public void putAll(final Map<? extends String, ? extends Double> m) {
@@ -42,13 +43,22 @@ public class DocumentSimilarity {
         Double vectorSum;
         weightSum.clear();
 
-        weightSum.putAll(article.getDocumentWords());
-        weightSum.putAll(comparisonArticle.getDocumentWords());
+        weightSum.putAll(cluster.getCentroidVector());
+        weightSum.putAll(article.getArticleVector());
 
         vectorSum = weightSum.values().stream().mapToDouble(Double::doubleValue).sum();
 
-        return (vectorSum / (article.getArticleSum() * comparisonArticle.getArticleSum()));
+        return (vectorSum / (cluster.getVectorSum() * article.getVectorSum()));
     }
 
+    public static double getVectorSum(final Map<String, Double> wordVector) {
+        double articleSum = 0;
 
+        for (final Double weight : wordVector.values()) {
+            articleSum += Math.pow(weight, 2);
+        }
+        articleSum = Math.sqrt(articleSum);
+
+        return articleSum;
+    }
 }

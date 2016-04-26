@@ -1,56 +1,118 @@
 package clustering.models;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import clustering.tools.DocumentSimilarity;
 
 /**
  * Created by Liam on 26/04/2016.
  */
 public class Cluster {
     private List<Article> articles;
-    private Article centroid;
-    private int id;
+    private Map<String, Double> centroidVector;
+    private Set<Article> removalSet;
+    private double vectorSum;
 
-    public Cluster(final int id) {
-        this.id = id;
+    public Cluster() {
         articles = new ArrayList<>();
-        centroid = null;
+        centroidVector = new HashMap<>();
+        removalSet = new HashSet<>();
     }
 
     public List<Article> getArticles() {
         return articles;
     }
 
-    public void setArticles(final List<Article> articles) {
-        this.articles = articles;
+    public Map<String, Double> getCentroidVector() {
+        return centroidVector;
     }
 
     public void addArticle(final Article article) {
+        addArticleVector(article);
         articles.add(article);
     }
 
-    public Article getCentroid() {
-        return centroid;
+    public void removeArticle(final Article article) {
+        removeArticleVector(article);
+        removalSet.add(article);
     }
 
-    public void setCentroid(final Article centroid) {
-        this.centroid = centroid;
+    public boolean clearRemovalSet() {
+        if (removalSet.size() == 0) {
+            return false;
+        }
+
+        for (final Article article : removalSet) {
+            articles.remove(article);
+        }
+        removalSet.clear();
+
+        return true;
     }
 
-    public int getId() {
-        return id;
+    public double getVectorSum() {
+        return vectorSum;
     }
 
-    public void clear() {
-        articles.clear();
+    private void removeArticleVector(final Article article) {
+        final int initialArticleSize = articles.size() - removalSet.size();
+        final Map<String, Double> articleVector = article.getArticleVector();
+        final Set<String> wordsForRemoval = new HashSet<>();
+
+        double initialSum;
+        Double articleValue;
+        for (final Map.Entry<String, Double> centroidEntry : centroidVector.entrySet()) {
+            initialSum = centroidEntry.getValue() * initialArticleSize;
+            if ((articleValue = articleVector.get(centroidEntry.getKey())) != null) {
+                initialSum -= articleValue;
+            }
+            if (initialSum != 0) {
+                centroidVector.put(centroidEntry.getKey(), initialSum / (initialArticleSize - 1));
+            }
+            else {
+                wordsForRemoval.add(centroidEntry.getKey());
+            }
+        }
+
+        for (final String word : wordsForRemoval) {
+            centroidVector.remove(word);
+        }
+
+        vectorSum = DocumentSimilarity.getVectorSum(centroidVector);
+    }
+
+    private void addArticleVector(final Article article) {
+        final int initialArticleSize = articles.size();
+        final Map<String, Double> articleVector = article.getArticleVector();
+
+        double initialSum;
+        Double articleValue;
+        for (final Map.Entry<String, Double> centroidEntry : centroidVector.entrySet()) {
+            initialSum = centroidEntry.getValue() * initialArticleSize;
+            if ((articleValue = articleVector.get(centroidEntry.getKey())) != null) {
+                initialSum += articleValue;
+            }
+            centroidVector.put(centroidEntry.getKey(), initialSum / (initialArticleSize + 1));
+        }
+
+        articleVector.entrySet().stream().filter(articleEntry -> centroidVector.get(articleEntry.getKey()) == null).forEach(articleEntry -> {
+            centroidVector.put(articleEntry.getKey(), articleEntry.getValue() / (initialArticleSize + 1));
+        });
+
+        vectorSum = DocumentSimilarity.getVectorSum(centroidVector);
     }
 
     public void plotCluster() {
-        System.out.println("[Cluster: " + id + "]");
-        System.out.println("[Centroid: " + centroid + "]");
+        System.out.println("[Cluster Size: " + articles.size() + "]");
+        System.out.println("[Centroid: " + centroidVector + "]");
         System.out.println("[Points: \n");
         for (final Article article : articles) {
-            System.out.println("x:" + article.pointX + "y:" + article.pointY);
+            System.out.println("title:" + article.getTitle());
         }
         System.out.println("]");
     }
