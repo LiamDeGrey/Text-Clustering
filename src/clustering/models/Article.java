@@ -1,6 +1,7 @@
 package clustering.models;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import clustering.tools.DocumentSimilarity;
@@ -11,7 +12,7 @@ import clustering.tools.DocumentSimilarity;
  * Created by Liam on 23-Apr-16.
  */
 public class Article {
-    private String[] topics;//Topics known to be relevant
+    private List<String> topics;//Topics known to be relevant
     private String title;//Title of article
     private String body = "";//The body text
     private double vectorSum = -1;
@@ -31,11 +32,11 @@ public class Article {
         return title;
     }
 
-    public void setTopics(final String[] topics) {
+    public void setTopics(final List<String> topics) {
         this.topics = topics;
     }
 
-    public String[] getTopics() {
+    public List<String> getTopics() {
         return topics;
     }
 

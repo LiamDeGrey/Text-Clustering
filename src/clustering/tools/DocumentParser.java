@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -101,7 +102,8 @@ public class DocumentParser {
         s = s.replace(TAG_TOPICS_OPENED, "");
         s = s.replace(TAG_TOPICS_CLOSED, "");
         s = s.replace(TAG_ITEM_OPENED, "");
-        String[] topics = s.split(TAG_ITEM_CLOSED);
+        final List<String> topics = new ArrayList<>();
+        Collections.addAll(topics, s.split(TAG_ITEM_CLOSED));
         currentArticle.setTopics(topics);
     }
 
