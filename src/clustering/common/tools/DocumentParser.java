@@ -1,4 +1,4 @@
-package clustering.tools;
+package clustering.common.tools;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
-import clustering.models.Article;
+import clustering.common.models.Article;
 
 /**
  * Very specific to my needs, pulls out the specific fields I am after

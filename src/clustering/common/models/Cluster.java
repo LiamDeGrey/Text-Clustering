@@ -1,4 +1,4 @@
-package clustering.models;
+package clustering.common.models;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import clustering.tools.DocumentSimilarity;
+import clustering.common.tools.DocumentSimilarity;
 
 /**
  * A class to represent each individual cluster holding

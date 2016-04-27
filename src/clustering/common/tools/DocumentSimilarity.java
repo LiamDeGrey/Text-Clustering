@@ -1,12 +1,12 @@
-package clustering.tools;
+package clustering.common.tools;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import clustering.models.Article;
-import clustering.models.Cluster;
+import clustering.common.models.Article;
+import clustering.common.models.Cluster;
 
 /**
  * a class to find the similarity between all of the
@@ -15,7 +15,7 @@ import clustering.models.Cluster;
  */
 public class DocumentSimilarity {
 
-    static double findDocumentSimilarities(final Cluster cluster, final Article article) {
+    public static double findDocumentSimilarities(final Cluster cluster, final Article article) {
         final Map<String, Double> weightSum = new HashMap<String, Double>() {
             @Override
             public void putAll(final Map<? extends String, ? extends Double> m) {

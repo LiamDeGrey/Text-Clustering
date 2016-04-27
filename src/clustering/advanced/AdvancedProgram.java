@@ -1,18 +1,18 @@
-package clustering;
+package clustering.advanced;
 
 import java.io.IOException;
 import java.util.List;
 
-import clustering.models.Article;
-import clustering.tools.DocumentParser;
-import clustering.tools.DocumentVectorCreator;
-import clustering.tools.KMeansClusterTool;
+import clustering.advanced.tools.DocumentVectorCreator;
+import clustering.advanced.tools.KMeansClusterTool;
+import clustering.common.models.Article;
+import clustering.common.tools.DocumentParser;
 
 /**
- * The master
- * Created by Liam on 23-Apr-16.
+ * A more advanced clustering approach using phrases instead of words
+ * Created by Liam on 27-Apr-16.
  */
-public class Main {
+public class AdvancedProgram {
 
     private static List<Article> retrieveArticles() throws IOException {
         List<Article> articles;

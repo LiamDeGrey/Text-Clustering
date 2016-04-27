@@ -1,10 +1,10 @@
-package clustering.models;
+package clustering.common.models;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import clustering.tools.DocumentSimilarity;
+import clustering.common.tools.DocumentSimilarity;
 
 /**
  * An article from my collection that contains a full vector of weightings
