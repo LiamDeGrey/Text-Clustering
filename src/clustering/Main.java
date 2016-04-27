@@ -5,9 +5,8 @@ import java.util.List;
 
 import clustering.models.Article;
 import clustering.tools.DocumentParser;
-import clustering.tools.DocumentSimilarity;
 import clustering.tools.DocumentVectorCreator;
-import clustering.tools.KMeans;
+import clustering.tools.KMeansClusterTool;
 
 /**
  * The master
@@ -21,11 +20,6 @@ public class Main {
         articles = DocumentParser.parseArticles();
         DocumentVectorCreator.setArticleVectors(articles);
 
-        if (articles != null) {
-            //DocumentSimilarity.findDocumentSimilarities(articles);
-            new KMeans(articles.subList(0, 1000));
-        }
-
         return articles;
     }
 
@@ -38,8 +32,9 @@ public class Main {
             e.printStackTrace();
         }
 
-        System.out.println("Articles ready");
-
-
+        if (articles != null) {
+            System.out.println("Articles ready");
+            KMeansClusterTool.clusterArticles(articles.subList(0, 1000));
+        }
     }
 }

@@ -10,6 +10,8 @@ import java.util.Set;
 import clustering.tools.DocumentSimilarity;
 
 /**
+ * A class to represent each individual cluster holding
+ * a variety of articles
  * Created by Liam on 26/04/2016.
  */
 public class Cluster {
@@ -105,15 +107,5 @@ public class Cluster {
         });
 
         vectorSum = DocumentSimilarity.getVectorSum(centroidVector);
-    }
-
-    public void plotCluster() {
-        System.out.println("[Cluster Size: " + articles.size() + "]");
-        System.out.println("[Centroid: " + centroidVector + "]");
-        System.out.println("[Points: \n");
-        for (final Article article : articles) {
-            System.out.println("title:" + article.getTitle());
-        }
-        System.out.println("]");
     }
 }

@@ -1,7 +1,5 @@
 package clustering.models;
 
-import com.google.gson.annotations.SerializedName;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,29 +11,13 @@ import clustering.tools.DocumentSimilarity;
  * Created by Liam on 23-Apr-16.
  */
 public class Article {
-    @SerializedName("topics")
     private String[] topics;//Topics known to be relevant
-    @SerializedName("title")
     private String title;//Title of article
-    @SerializedName("body")
     private String body = "";//The body text
-    @SerializedName("vectorSum")
     private double vectorSum = -1;
-
-    @SerializedName("articleVector")
     private Map<String, Double> articleVector = new HashMap<>();
 
-    private int cluster;
-
     private transient boolean requiresBodyText;
-
-    public int getCluster() {
-        return cluster;
-    }
-
-    public void setCluster(final int cluster) {
-        this.cluster = cluster;
-    }
 
     public String getBody() {
         return body;

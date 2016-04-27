@@ -8,31 +8,19 @@ import clustering.models.Article;
 import clustering.models.Cluster;
 
 /**
+ * A tool used to cluster a list articles
  * Created by Liam on 26/04/2016.
  */
-public class KMeans {
+public class KMeansClusterTool {
+    private static final int K = 3;
+    private static final int maxIterations = 20;
 
-    //Number of Clusters. This metric should be related to the number of articles
-    private int K = 10;
+    private static int iteration = 0;
 
-    private int maxIterations = 20;
+    public static void clusterArticles(List<Article> articles) {
+        System.out.println("CLUSTERING BEGINNING");
+        final List<Cluster> clusters = new ArrayList<>();
 
-    private List<Article> articles;
-    private List<Cluster> clusters;
-
-    public KMeans(final List<Article> articles) {
-        this.articles = articles;
-        this.clusters = new ArrayList<>();
-
-        init();
-        //calculate();
-    }
-
-    //Initializes the process
-    public void init() {
-
-        //Create Clusters
-        //Set Random Centroids
         final HashSet<Integer> randoms = new HashSet<>();
         while (randoms.size() != K) {
             randoms.add((int) (Math.random() * (articles.size() - 1)));
@@ -45,23 +33,28 @@ public class KMeans {
             clusters.add(cluster);
         }
 
-        //Print Initial state
-        plotClusters();
+        populateClustersInitial(articles, clusters);
 
-        populateClustersInitial();
+        articles = null;
 
+        int size = 0;
         for (Cluster cluster : clusters) {
             System.out.println("Clusters size = " + cluster.getArticles().size());
+            size += cluster.getArticles().size();
         }
+        System.out.println("TOTAL SIZE = " + size);
 
-        evaluateClusters();
+        evaluateClusters(clusters);
 
+        size = 0;
         for (Cluster cluster : clusters) {
             System.out.println("Clusters size = " + cluster.getArticles().size());
+            size += cluster.getArticles().size();
         }
+        System.out.println("TOTAL SIZE = " + size);
     }
 
-    private void populateClustersInitial() {
+    private static void populateClustersInitial(final List<Article> articles, final List<Cluster> clusters) {
         Cluster bestCluster = clusters.get(0);
         double maxSimilarity, tempSimilarity;
         for (final Article article : articles) {
@@ -74,15 +67,11 @@ public class KMeans {
             }
             bestCluster.addArticle(article);
         }
-
-        articles = null;
     }
 
-    private int iteration = 0;
-
-    private void evaluateClusters() {
+    private static void evaluateClusters(final List<Cluster> clusters) {
         if (++iteration != maxIterations) {
-            System.out.println("iteration " + iteration + " out of " + maxIterations);
+            System.out.println("iteration " + iteration + " out of a potential " + maxIterations);
             boolean mustRetry = false;
             Cluster bestCluster = clusters.get(0);
             double maxSimilarity, tempSimilarity;
@@ -101,19 +90,13 @@ public class KMeans {
                         bestCluster.addArticle(article);
                     }
                 }
-                mustRetry = mustRetry || cluster.clearRemovalSet();
+
+                mustRetry = cluster.clearRemovalSet() || mustRetry;
             }
 
             if (mustRetry) {
-                evaluateClusters();
+                evaluateClusters(clusters);
             }
-        }
-    }
-
-    private void plotClusters() {
-        for (int i = 0; i < K; i++) {
-            Cluster c = clusters.get(i);
-            c.plotCluster();
         }
     }
 }

@@ -15,7 +15,7 @@ import clustering.models.Cluster;
  */
 public class DocumentSimilarity {
 
-    public static double findDocumentSimilarities(final Cluster cluster, final Article article) {
+    static double findDocumentSimilarities(final Cluster cluster, final Article article) {
         final Map<String, Double> weightSum = new HashMap<String, Double>() {
             @Override
             public void putAll(final Map<? extends String, ? extends Double> m) {
