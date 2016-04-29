@@ -77,7 +77,7 @@ public class KMeansClusterTool {
 
         System.out.println();
         for (int i = 0; i < kValue.length; i++) {
-            System.out.println(String.format("When using %d clusters, accuracy was %.2f and Silhouette value was %.2f", kValue[i], accuracy[i], silhouetteValues[i]));
+            System.out.println(String.format("When using %d clusters, accuracy was %.2f%%", kValue[i], accuracy[i]));
         }
     }
 
