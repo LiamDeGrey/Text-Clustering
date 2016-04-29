@@ -1,6 +1,7 @@
 package clustering.advanced.tools;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,12 +78,13 @@ public class DocumentVectorCreator {
         String phrase;
         for (final Article article : articles) {
             documentPhrases = new HashMap<>();
+            //Collections.addAll(words = new ArrayList<>(), article.getBody().toLowerCase().split("\\s"));
             words = cleanTerms(article.getBody().toLowerCase().split("\\s"));
             documentLength = words.size();
             for (int i = 0; i < words.size(); i++) {
                 if (!removalWords.contains(word1 = words.get(i))) {
-                    phraseCountTable.put(word1, (universalPhraseCount = phraseCountTable.get(word1)) != null ? universalPhraseCount + 1 : 1);
-                    documentPhrases.put(word1, (documentPhraseCount = documentPhrases.get(word1)) != null ? documentPhraseCount + 1 : 1);
+                    //phraseCountTable.put(word1, (universalPhraseCount = phraseCountTable.get(word1)) != null ? universalPhraseCount + 1 : 1);
+                    //documentPhrases.put(word1, (documentPhraseCount = documentPhrases.get(word1)) != null ? documentPhraseCount + 1 : 1);
                     if (words.size() > i + 1 && !removalWords.contains(word2 = words.get(i + 1))) {
                         phrase = String.format(PHRASE_FORMAT, word1, word2);
 
@@ -109,7 +111,7 @@ public class DocumentVectorCreator {
         //}
 
         for (final Article article : articles) {
-            for (final Map.Entry<String, Double> documentPhrase : article.getArticleVector().entrySet()) {
+            for (final Map.Entry<String, Double> documentPhrase : article.getVector().entrySet()) {
                 documentPhrase.setValue(documentPhrase.getValue() * Math.log10((totalDocuments / (phraseCountTable.get(documentPhrase.getKey()) * 1.0))));
             }
         }

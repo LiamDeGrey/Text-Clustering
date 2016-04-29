@@ -11,7 +11,7 @@ import clustering.common.tools.DocumentSimilarity;
  * using TFIDF for each unique word
  * Created by Liam on 23-Apr-16.
  */
-public class Article {
+public class Article implements Measurable {
     private List<String> topics;//Topics known to be relevant
     private String title;//Title of article
     private String body = "";//The body text
@@ -46,10 +46,12 @@ public class Article {
         body = null;
     }
 
-    public Map<String, Double> getArticleVector() {
+    @Override
+    public Map<String, Double> getVector() {
         return articleVector;
     }
 
+    @Override
     public double getVectorSum() {
         if (vectorSum == -1) {
             vectorSum = DocumentSimilarity.getVectorSum(articleVector);

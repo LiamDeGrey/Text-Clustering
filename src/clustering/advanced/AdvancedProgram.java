@@ -34,6 +34,7 @@ public class AdvancedProgram {
 
         if (articles != null) {
             System.out.println("Articles ready");
+
             KMeansClusterTool.clusterArticles(articles.subList(0, 1000));
         }
     }

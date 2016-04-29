@@ -5,8 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import clustering.common.models.Article;
-import clustering.common.models.Cluster;
+import clustering.common.models.Measurable;
 
 /**
  * a class to find the similarity between all of the
@@ -15,7 +14,7 @@ import clustering.common.models.Cluster;
  */
 public class DocumentSimilarity {
 
-    public static double findDocumentSimilarities(final Cluster cluster, final Article article) {
+    public static double findDocumentSimilarities(final Measurable measurable1, final Measurable measurable2) {
         final Map<String, Double> weightSum = new HashMap<String, Double>() {
             @Override
             public void putAll(final Map<? extends String, ? extends Double> m) {
@@ -41,14 +40,15 @@ public class DocumentSimilarity {
         };
 
         Double vectorSum;
-        weightSum.clear();
 
-        weightSum.putAll(cluster.getCentroidVector());
-        weightSum.putAll(article.getArticleVector());
+        weightSum.putAll(measurable1.getVector());
+        weightSum.putAll(measurable2.getVector());
 
         vectorSum = weightSum.values().stream().mapToDouble(Double::doubleValue).sum();
 
-        return (vectorSum / (cluster.getVectorSum() * article.getVectorSum()));
+        final Double result = (vectorSum / (measurable1.getVectorSum() * measurable2.getVectorSum()));
+
+        return result.isNaN() ? 0 : result;
     }
 
     public static double getVectorSum(final Map<String, Double> wordVector) {

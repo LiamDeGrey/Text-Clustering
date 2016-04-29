@@ -16,45 +16,51 @@ import clustering.common.tools.DocumentSimilarity;
  * Created by Liam on 26/04/2016.
  */
 public class KMeansClusterTool {
-    private static final int K = 3;
-    private static final int maxIterations = 20;
+    private static final int MAX_ITERATIONS_CLUSTERING = 20;
+    private static final int CLUSTER_TRIALS = 10;
 
     private static int iteration = 0;
 
-    public static void clusterArticles(List<Article> articles) {
+    public static void clusterArticles(final List<Article> finalArticles) {
         System.out.println("CLUSTERING BEGINNING");
 
-        final int k = findK(articles);
-        System.out.println("K = " + k);
+        final int lastK = findK(finalArticles);
+        final int firstK = 1 + lastK - CLUSTER_TRIALS;
 
-        final List<Cluster> clusters = new ArrayList<>(k);
+        final List<Article> articles = new ArrayList<>();
+        final List<Cluster> clusters = new ArrayList<>();
 
-        Cluster initialCluster;
-        int random;
-        for (int i = 0; i < k; i++) {
-            random = (int) (Math.random() * (articles.size() - 1));
-            initialCluster = new Cluster();
-            initialCluster.addArticle(articles.get(random));
-            articles.remove(random);
-            clusters.add(initialCluster);
-        }
+        int[] kValue = new int[CLUSTER_TRIALS];
+        double[] accuracy = new double[CLUSTER_TRIALS];
+        double[] silhouetteValues = new double[CLUSTER_TRIALS];
+        for (int k = firstK; k <= lastK; k++) {
+            System.out.println(String.format("Attempting to converge with %d clusters", k));
 
-        populateClustersInitial(articles, clusters);
+            articles.clear();
+            clusters.clear();
 
-        articles = null;
+            articles.addAll(finalArticles);
 
-        int size = 0;
-        for (Cluster cluster : clusters) {
-            System.out.println("Clusters size = " + cluster.getArticles().size());
-            size += cluster.getArticles().size();
-        }
-        System.out.println("TOTAL SIZE = " + size);
+            Cluster initialCluster;
+            int random;
+            for (int i = 0; i < k; i++) {
+                random = (int) (Math.random() * (articles.size() - 1));
+                initialCluster = new Cluster();
+                initialCluster.addArticle(articles.get(random));
+                articles.remove(random);
+                clusters.add(initialCluster);
+            }
 
-        final List<Article> extraArticles = new ArrayList<>();
-        final List<Cluster> extraClusters = new ArrayList<>();
-        do {
-            extraArticles.clear();
-            extraClusters.clear();
+            populateClustersInitial(articles, clusters);
+
+            int size = 0;
+            for (Cluster cluster : clusters) {
+                System.out.println("Clusters size = " + cluster.getArticles().size());
+                size += cluster.getArticles().size();
+            }
+            System.out.println("TOTAL SIZE = " + size);
+
+            iteration = 0;
             evaluateClusters(clusters);
 
             size = 0;
@@ -64,21 +70,15 @@ public class KMeansClusterTool {
             }
             System.out.println("TOTAL SIZE = " + size);
 
-            clusters.stream().filter(cluster -> cluster.getArticles().size() <= 3).forEach(cluster -> {
-                extraArticles.addAll(cluster.getArticles());
-                extraClusters.add(cluster);
-            });
+            kValue[k - firstK] = k;
+            accuracy[k - firstK] = checkPerformance(clusters);
+            //silhouetteValues[k - firstK] = clusterValidation(clusters);
+        }
 
-            for (final Article extraArticle : extraArticles) {
-                clusters.get(0).addArticle(extraArticle);
-            }
-
-            extraClusters.forEach(clusters::remove);
-
-        } while (extraArticles.size() != 0);
-
-
-        checkPerformance(clusters);
+        System.out.println();
+        for (int i = 0; i < kValue.length; i++) {
+            System.out.println(String.format("When using %d clusters, accuracy was %.2f and Silhouette value was %.2f", kValue[i], accuracy[i], silhouetteValues[i]));
+        }
     }
 
     private static int findK(final List<Article> articles) {
@@ -110,8 +110,8 @@ public class KMeansClusterTool {
     }
 
     private static void evaluateClusters(final List<Cluster> clusters) {
-        if (++iteration != maxIterations) {
-            System.out.println("iteration " + iteration + " out of a potential " + maxIterations);
+        if (++iteration != MAX_ITERATIONS_CLUSTERING) {
+            System.out.println("iteration " + iteration + " out of a potential " + MAX_ITERATIONS_CLUSTERING);
             boolean mustRetry = false;
             Cluster bestCluster = clusters.get(0);
             double maxSimilarity, tempSimilarity;
@@ -143,7 +143,7 @@ public class KMeansClusterTool {
         }
     }
 
-    private static void checkPerformance(final List<Cluster> clusters) {
+    private static double checkPerformance(final List<Cluster> clusters) {
         double score = 0;
         double total = 0;
 
@@ -175,6 +175,13 @@ public class KMeansClusterTool {
             }
         }
 
-        System.out.println(String.format("K-Means using %d clusters, achieved an accuracy of %.2f%%", clusters.size(), score * 100 / total));
+        final double accuracy = score * 100 / total;
+        System.out.println(String.format("K-Means using %d clusters, achieved an accuracy of %.2f%%", clusters.size(), accuracy));
+
+        return accuracy;
+    }
+
+    private static double clusterValidation(final List<Cluster> clusters) {
+        return SilhouetteValidation.getSilhouetteValue(clusters);
     }
 }

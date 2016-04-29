@@ -14,7 +14,7 @@ import clustering.common.tools.DocumentSimilarity;
  * a variety of articles
  * Created by Liam on 26/04/2016.
  */
-public class Cluster {
+public class Cluster implements Measurable {
     private List<Article> articles;
     private Map<String, Double> centroidVector;
     private Set<Article> removalSet;
@@ -30,8 +30,14 @@ public class Cluster {
         return articles;
     }
 
-    public Map<String, Double> getCentroidVector() {
+    @Override
+    public Map<String, Double> getVector() {
         return centroidVector;
+    }
+
+    @Override
+    public double getVectorSum() {
+        return vectorSum;
     }
 
     public void addArticle(final Article article) {
@@ -57,13 +63,9 @@ public class Cluster {
         return true;
     }
 
-    public double getVectorSum() {
-        return vectorSum;
-    }
-
     private void removeArticleVector(final Article article) {
         final int initialArticleSize = articles.size() - removalSet.size();
-        final Map<String, Double> articleVector = article.getArticleVector();
+        final Map<String, Double> articleVector = article.getVector();
         final Set<String> wordsForRemoval = new HashSet<>();
 
         double initialSum;
@@ -90,7 +92,7 @@ public class Cluster {
 
     private void addArticleVector(final Article article) {
         final int initialArticleSize = articles.size();
-        final Map<String, Double> articleVector = article.getArticleVector();
+        final Map<String, Double> articleVector = article.getVector();
 
         double initialSum;
         Double articleValue;
