@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import clustering.common.tools.DocumentSimilarity;
+import clustering.baseline.tools.DocumentSimilarity;
 
 /**
  * An article from my collection that contains a full vector of weightings

@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import clustering.common.tools.DocumentSimilarity;
+import clustering.baseline.tools.DocumentSimilarity;
 
 /**
  * A class to represent each individual cluster holding

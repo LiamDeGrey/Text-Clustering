@@ -1,4 +1,4 @@
-package clustering.common.tools;
+package clustering.baseline.tools;
 
 import java.util.ArrayList;
 import java.util.HashMap;

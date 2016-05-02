@@ -25,6 +25,7 @@ public class AdvancedProgram {
 
     public static void main(final String[] args) {
         List<Article> articles = null;
+
         try {
             articles = retrieveArticles();
         }

@@ -4,7 +4,7 @@ import java.util.List;
 
 import clustering.common.models.Article;
 import clustering.common.models.Cluster;
-import clustering.common.tools.DocumentSimilarity;
+import clustering.baseline.tools.DocumentSimilarity;
 
 /**
  * NOT IDEAL BECAUSE TOO MANY ARTICLES DON"T SHARE PHRASES

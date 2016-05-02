@@ -9,7 +9,7 @@ import java.util.Set;
 
 import clustering.common.models.Article;
 import clustering.common.models.Cluster;
-import clustering.common.tools.DocumentSimilarity;
+import clustering.baseline.tools.DocumentSimilarity;
 
 /**
  * A tool used to cluster a list articles
