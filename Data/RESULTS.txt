@@ -1,0 +1,1 @@
+Used phrases : true; Number of clusters : 65; Number of articles : 500; Accuracy : 62.80%; 64.00%;

@@ -13,6 +13,7 @@ import clustering.tools.KMeansClusterTool;
  * Created by Liam on 27-Apr-16.
  */
 public class Main {
+    public static final boolean FLAG_PHRASES = true;
 
     private static List<Article> retrieveArticles() throws IOException {
         List<Article> articles;
@@ -37,7 +38,7 @@ public class Main {
         if (articles != null) {
             System.out.println("Articles ready");
 
-            KMeansClusterTool.clusterArticles(articles.subList(0, 1000));
+            KMeansClusterTool.clusterArticles(articles.subList(0, 500));
         }
 
         System.out.println("Program finished in " + (System.currentTimeMillis() - startTime));

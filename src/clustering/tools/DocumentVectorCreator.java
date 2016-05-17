@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import clustering.Main;
 import clustering.models.Article;
 
 
@@ -16,7 +17,6 @@ import clustering.models.Article;
  */
 public class DocumentVectorCreator {
     private static final String PHRASE_FORMAT = "%s,%s";
-    private static final boolean FLAG_PHRASES = false;
 
     /**
      * @param articles
@@ -79,7 +79,7 @@ public class DocumentVectorCreator {
             words = cleanTerms(article.getBody().toLowerCase().split("\\s"));
             for (int i = 0; i < words.size(); i++) {
                 if (!removalWords.contains(word1 = words.get(i))) {
-                    if (FLAG_PHRASES) {
+                    if (Main.FLAG_PHRASES) {
                         if (words.size() > i + 1 && !removalWords.contains(word2 = words.get(i + 1))) {
                             phrase = String.format(PHRASE_FORMAT, word1, word2);
 

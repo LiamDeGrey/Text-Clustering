@@ -8,8 +8,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import clustering.Main;
 import clustering.models.Article;
 import clustering.models.Cluster;
+import results.Storage;
 
 /**
  * A tool used to cluster a list articles
@@ -60,8 +62,12 @@ public class KMeansClusterTool {
         }
         System.out.println("TOTAL SIZE = " + size);
 
+        final double accuracy = checkPerformance(clusters);
+
         System.out.println();
-        System.out.println(String.format("When using %d clusters, accuracy was %.2f%%", k, checkPerformance(clusters)));
+        System.out.println(String.format("When using %d clusters, accuracy was %.2f%%", k, accuracy));
+
+        Storage.storeResult(Main.FLAG_PHRASES, clusters.size(), finalArticles.size(), accuracy);
     }
 
     private static int findK(final List<Article> articles) {
