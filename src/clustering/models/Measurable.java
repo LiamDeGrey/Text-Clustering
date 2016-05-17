@@ -1,4 +1,4 @@
-package clustering.common.models;
+package clustering.models;
 
 import java.util.Map;
 

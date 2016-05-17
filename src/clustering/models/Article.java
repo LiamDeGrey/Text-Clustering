@@ -1,10 +1,11 @@
-package clustering.common.models;
+package clustering.models;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import clustering.baseline.tools.DocumentSimilarity;
+import clustering.tools.DocumentSimilarity;
+
 
 /**
  * An article from my collection that contains a full vector of weightings
@@ -17,6 +18,7 @@ public class Article implements Measurable {
     private String body = "";//The body text
     private double vectorSum = -1;
     private Map<String, Double> articleVector = new HashMap<>();
+    private Cluster cluster;
 
     private transient boolean requiresBodyText;
 
@@ -43,6 +45,8 @@ public class Article implements Measurable {
     public void setArticleVector(final Map<String, Double> articleVector) {
         this.articleVector.putAll(articleVector);
 
+        vectorSum = DocumentSimilarity.getVectorSum(articleVector);
+
         body = null;
     }
 
@@ -53,10 +57,6 @@ public class Article implements Measurable {
 
     @Override
     public double getVectorSum() {
-        if (vectorSum == -1) {
-            vectorSum = DocumentSimilarity.getVectorSum(articleVector);
-        }
-
         return vectorSum;
     }
 
@@ -80,5 +80,13 @@ public class Article implements Measurable {
     public void finishBody() {
         body = body.replaceAll("\\s+", " ");
         requiresBodyText = false;
+    }
+
+    public Cluster getCluster() {
+        return cluster;
+    }
+
+    public void setCluster(final Cluster cluster) {
+        this.cluster = cluster;
     }
 }

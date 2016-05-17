@@ -1,18 +1,18 @@
-package clustering.advanced;
+package clustering;
 
 import java.io.IOException;
 import java.util.List;
 
-import clustering.advanced.tools.DocumentVectorCreator;
-import clustering.advanced.tools.KMeansClusterTool;
-import clustering.common.models.Article;
-import clustering.common.tools.DocumentParser;
+import clustering.models.Article;
+import clustering.tools.DocumentParser;
+import clustering.tools.DocumentVectorCreator;
+import clustering.tools.KMeansClusterTool;
 
 /**
  * A more advanced clustering approach using phrases instead of words
  * Created by Liam on 27-Apr-16.
  */
-public class AdvancedProgram {
+public class Main {
 
     private static List<Article> retrieveArticles() throws IOException {
         List<Article> articles;
@@ -24,6 +24,7 @@ public class AdvancedProgram {
     }
 
     public static void main(final String[] args) {
+        final long startTime = System.currentTimeMillis();
         List<Article> articles = null;
 
         try {
@@ -38,5 +39,7 @@ public class AdvancedProgram {
 
             KMeansClusterTool.clusterArticles(articles.subList(0, 1000));
         }
+
+        System.out.println("Program finished in " + (System.currentTimeMillis() - startTime));
     }
 }

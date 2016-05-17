@@ -1,11 +1,12 @@
-package clustering.baseline.tools;
+package clustering.tools;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import clustering.common.models.Measurable;
+import clustering.models.Measurable;
+
 
 /**
  * a class to find the similarity between all of the
@@ -14,27 +15,35 @@ import clustering.common.models.Measurable;
  */
 public class DocumentSimilarity {
 
-    public static double findDocumentSimilarities(final Measurable measurable1, final Measurable measurable2) {
+    static double findDocumentSimilarities(final Measurable measurable1, final Measurable measurable2) {
         final Map<String, Double> weightSum = new HashMap<String, Double>() {
+            private boolean firstRun = true;
+
             @Override
             public void putAll(final Map<? extends String, ? extends Double> m) {
-                if (isEmpty()) {
+                if (firstRun) {
                     super.putAll(m);
+                    firstRun = false;
                 }
                 else {
-                    final List<String> requireRemoval = new ArrayList<>();
-                    String originalWord;
-                    Double newWeight;
-                    for (final Map.Entry<String, Double> originalItem : entrySet()) {
-                        if ((newWeight = m.get(originalWord = originalItem.getKey())) != null) {
-                            put(originalWord, get(originalWord) * newWeight);
+                    if (entrySet().size() > 0 && m.entrySet().size() > 0) {
+                        final List<String> requireRemoval = new ArrayList<>();
+                        String originalWord;
+                        Double newWeight;
+                        for (final Map.Entry<String, Double> originalItem : entrySet()) {
+                            if ((newWeight = m.get(originalWord = originalItem.getKey())) != null) {
+                                put(originalWord, get(originalWord) * newWeight);
+                            }
+                            else {
+                                requireRemoval.add(originalWord);
+                            }
                         }
-                        else {
-                            requireRemoval.add(originalWord);
-                        }
-                    }
 
-                    requireRemoval.forEach(this::remove);
+                        requireRemoval.forEach(this::remove);
+                    }
+                    else {
+                        clear();
+                    }
                 }
             }
         };
